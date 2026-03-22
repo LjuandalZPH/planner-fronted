@@ -20,13 +20,22 @@ You are an expert Senior Fullstack Engineer specializing in **Next.js 14+**, **T
 - **XP Calculation**: XP logic should reside in `@/lib/gamification.ts` or similar to ensure consistency between frontend display and backend rewards.
 - **Real-time**: Use Supabase listeners for XP updates to ensure the `XPBar.tsx` reflects changes immediately without full page reloads.
 
-## 4. Coding Standards
+## 4. Design & UX Standards (New RPG Focus)
+- **Aesthetic**: Modern Fantasy / Clean Skewomorphism. Do not use heavy textures. Use Tailwind CSS for pseudo-element borders, `drop-shadow` glows (cyan/gold), and subtle background gradients.
+- **Typography**: 
+    - Titles (`h1`, `h2`, Mission Titles): `Cinzel` or a strong Serif font.
+    - Body/Data: `Inter` or `Geist Sans`.
+- **Flow**:
+    - **Mission Creation**: MUST use a Modal or Drawer. The main dashboard should not show the full form by default. trigger with a "[+] Accept New Contract" button.
+    - **Mission Completion**: No incremental progress buttons. Use a single "Seal Contract / Complete" action that provides immediate visual feedback.
+
+## 5. Coding Standards
 - **Server Actions**: Use for all mutations (creating missions, leveling up). 
 - **Error Handling**: Use `try/catch` in Server Actions and return a standard response object: `{ success: boolean, data?: T, error?: string }`.
 - **UI Components**: Follow the Atomic Design pattern in `@/components/ui`. Use Shadcn-like patterns for accessibility.
 - **File Naming**: Kebab-case for files (e.g., `mission-card.tsx`), PascalCase for React components.
 
-## 5. Directory Mapping
+## 6. Directory Mapping
 - `app/`: Routing and Page Layouts.
 - `components/gamification/`: Leveling, XP, and Reward UI.
 - `components/mission/`: CRUD components for tasks.
@@ -34,7 +43,7 @@ You are an expert Senior Fullstack Engineer specializing in **Next.js 14+**, **T
 - `lib/`: Shared utilities and third-party client initializations.
 - `types/`: Data definitions (Missions, User, XPLog).
 
-## 6. Development Workflow
+## 7. Development Workflow
 - Before generating code, check if a similar utility exists in `@/lib/utils.ts`.
 - When creating new pages, ensure they have a proper Loading state (`loading.tsx`).
 - If implementing AI features (via `aiService.ts`), ensure prompts are optimized for low token usage.

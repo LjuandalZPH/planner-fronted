@@ -28,5 +28,13 @@ export function useMissions() {
     setMissions((prev) => prev.filter((mission) => mission.id !== id));
   }, []);
 
-  return { missions, addMission, updateMission, deleteMission };
+  const completeMission = useCallback((id: string) => {
+    setMissions((prev) =>
+      prev.map((mission) =>
+        mission.id === id ? { ...mission, progress: 100 } : mission
+      )
+    );
+  }, []);
+
+  return { missions, addMission, updateMission, deleteMission, completeMission };
 }

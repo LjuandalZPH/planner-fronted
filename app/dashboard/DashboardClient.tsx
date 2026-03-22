@@ -1,122 +1,125 @@
 "use client";
 
+import { useState } from "react";
 import { MissionForm } from "@/components/mission/MissionForm";
 import { MissionList } from "@/components/mission/MissionList";
+import { HeroProfile } from "@/components/gamification/HeroProfile";
+import { Modal } from "@/components/ui/modal";
+import { FAB } from "@/components/ui/fab";
 import { useMissions } from "@/hooks/useMissions";
 import { useXP } from "@/hooks/useXP";
+import { Scroll } from "lucide-react";
 
 export function DashboardClient() {
-  const { missions, addMission, updateMission, deleteMission } = useMissions();
-  const { xp, level, gainXP } = useXP();
+  const { missions, addMission, completeMission, deleteMission } = useMissions();
+  const { xp, level, nextLevelXP, gainXP } = useXP();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [completingId, setCompletingId] = useState<string | null>(null);
 
   function handleCreateMission(data: {
     title: string;
     description: string;
     xp: number;
   }) {
+    setIsSubmitting(true);
     addMission(data);
-    gainXP(data.xp);
+    gainXP(Math.floor(data.xp * 0.1));
+    setIsSubmitting(false);
+    setIsModalOpen(false);
   }
 
-  function handleUpdateProgress(id: string, progress: number) {
+  async function handleCompleteMission(id: string) {
     const mission = missions.find((m) => m.id === id);
-    if (mission && progress > mission.progress) {
-      const xpGained = Math.floor(
-        mission.xp * ((progress - mission.progress) / 100)
-      );
-      updateMission(id, { progress });
-      if (xpGained > 0) {
-        gainXP(xpGained);
-      }
-    }
+    if (!mission) return;
+
+    setCompletingId(id);
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    completeMission(id);
+    gainXP(mission.xp);
+    setCompletingId(null);
   }
 
   function handleDeleteMission(id: string) {
     deleteMission(id);
   }
 
+  const completedCount = missions.filter((m) => m.progress >= 100).length;
+  const pendingCount = missions.filter((m) => m.progress < 100).length;
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-200 px-6 py-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="relative min-h-screen bg-slate-950">
+      {/* Background glow */}
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,rgba(168,85,247,0.08)_0%,transparent_50%)]" />
+
+      <div className="relative mx-auto max-w-7xl p-6">
         {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-900 mb-2">
-            Panel de Control
+        <header className="mb-8 text-center">
+          <h1 className="font-cinzel mb-2 text-3xl font-extrabold text-slate-50 md:text-4xl lg:text-5xl drop-shadow-[0_0_40px_rgba(168,85,247,0.3)]">
+            Mission Board
           </h1>
-          <p className="text-slate-500">
-            Gestiona tus misiones y sigue tu progreso
+
+          <p className="flex items-center justify-center gap-2 text-slate-500">
+            <Scroll size={16} className="text-purple-500" />
+            Accept contracts and seal your destiny
           </p>
         </header>
 
         {/* Layout */}
-        <div className="grid gap-8 items-start md:grid-cols-[350px_1fr]">
-          {/* Sidebar */}
-          <aside className="md:sticky md:top-8 space-y-6">
-            <MissionForm onSubmit={handleCreateMission} />
+        <div className="grid gap-6">
+          <div className="grid items-start gap-6 lg:grid-cols-[280px_1fr]">
+            
+            {/* Sidebar */}
+            <aside className="lg:sticky lg:top-6">
+              <HeroProfile
+                level={level}
+                xp={xp}
+                nextLevelXP={nextLevelXP}
+                totalMissions={missions.length}
+                completedMissions={completedCount}
+              />
+            </aside>
 
-            {/* Stats Card */}
-            <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm">
-              {/* XP */}
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-slate-500">
-                    Nivel {level}
-                  </span>
-                  <span className="text-sm font-semibold text-slate-600">
-                    {xp} XP
-                  </span>
-                </div>
+            {/* Main */}
+            <main>
+              {/* Section header */}
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-cinzel text-xl font-semibold text-slate-50">
+                  Active Contracts
+                </h2>
 
-                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-linear-to-r from-blue-500 to-violet-500 transition-all duration-500"
-                    style={{ width: `${xp % 100}%` }}
-                  />
-                </div>
+                <span className="rounded-full bg-slate-900 px-3 py-1 text-sm text-slate-500">
+                  {pendingCount} pending
+                </span>
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-slate-50 rounded-lg text-center">
-                  <div className="text-lg font-bold text-slate-800">
-                    {missions.length}
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    Misiones
-                  </div>
-                </div>
-
-                <div className="p-3 bg-slate-50 rounded-lg text-center">
-                  <div className="text-lg font-bold text-slate-800">
-                    {missions.filter((m) => m.progress >= 100).length}
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    Completadas
-                  </div>
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          {/* Main */}
-          <main>
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-xl font-bold text-slate-800">
-                Tus Misiones
-              </h2>
-              <span className="text-sm text-slate-500">
-                {missions.filter((m) => m.progress < 100).length} activas
-              </span>
-            </div>
-
-            <MissionList
-              missions={missions}
-              onUpdateProgress={handleUpdateProgress}
-              onDelete={handleDeleteMission}
-            />
-          </main>
+              <MissionList
+                missions={missions}
+                onComplete={handleCompleteMission}
+                onDelete={handleDeleteMission}
+                completingId={completingId}
+              />
+            </main>
+          </div>
         </div>
       </div>
+
+      {/* Floating button */}
+      <FAB onClick={() => setIsModalOpen(true)} />
+
+      {/* Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Accept New Contract"
+      >
+        <MissionForm
+          onSubmit={handleCreateMission}
+          onCancel={() => setIsModalOpen(false)}
+          isSubmitting={isSubmitting}
+        />
+      </Modal>
     </div>
   );
 }
