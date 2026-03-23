@@ -51,6 +51,7 @@ Thumbs.db
 # Others
 .direnv/
 .envrc
+.swc
 
 # lock files (solo ignora si usan otro gestor)
 # package-lock.json
