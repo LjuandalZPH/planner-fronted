@@ -48,6 +48,10 @@ Thumbs.db
 *.log
 *.tmp
 
+# Others
+.direnv/
+.envrc
+
 # lock files (solo ignora si usan otro gestor)
 # package-lock.json
 # yarn.lock
