@@ -1,6 +1,37 @@
 import { render, screen } from "@testing-library/react";
 import { DashboardClient } from "@/app/dashboard/DashboardClient";
 
+jest.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/dashboard",
+  useRouter: () => ({ replace: jest.fn() }),
+}));
+
+jest.mock("@/hooks/useStreak", () => ({
+  useStreak: () => ({
+    streak: { currentStreak: 0, lastCompletionDate: null },
+    registerMissionSeal: jest.fn(),
+  }),
+}));
+
+jest.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: {
+      id: "test-user",
+      email: "hero@example.com",
+      user_metadata: {
+        full_name: "Test Hero",
+        avatar_url: null,
+      },
+    },
+    isLoading: false,
+    signOut: jest.fn(),
+    signInWithGoogle: jest.fn(),
+    isAuthenticated: true,
+    error: null,
+  }),
+}));
+
 jest.mock("@/hooks/useMissions", () => ({
   useMissions: () => ({
     missions: [],
@@ -16,6 +47,7 @@ jest.mock("@/hooks/useXP", () => ({
     level: 1,
     nextLevelXP: 100,
     gainXP: jest.fn(),
+    setProgress: jest.fn(),
   }),
 }));
 
@@ -28,7 +60,9 @@ describe("DashboardClient Component", () => {
     it("should render dashboard title", () => {
       render(<DashboardClient />);
 
-      expect(screen.getByText("Mission Board")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 1, name: /Mission Board/i }),
+      ).toBeInTheDocument();
     });
 
     it("should render subtitle", () => {
@@ -42,7 +76,7 @@ describe("DashboardClient Component", () => {
     it("should render HeroProfile component", () => {
       render(<DashboardClient />);
 
-      expect(screen.getByText("Level")).toBeInTheDocument();
+      expect(screen.getAllByText("Level").length).toBeGreaterThan(0);
     });
 
     it("should render Active Contracts section", () => {
@@ -55,6 +89,12 @@ describe("DashboardClient Component", () => {
       render(<DashboardClient />);
 
       expect(screen.getByText("No Pending Contracts")).toBeInTheDocument();
+    });
+
+    it("should render Black Market navigation", () => {
+      render(<DashboardClient />);
+
+      expect(screen.getByRole("button", { name: /The Black Market/i })).toBeInTheDocument();
     });
 
     it("should render FAB button", () => {

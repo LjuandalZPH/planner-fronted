@@ -8,27 +8,27 @@ describe("MissionList Component", () => {
       id: "mission-1",
       title: "First Mission",
       description: "Description 1",
-      xp: 50,
+      rarity: "epic",
       progress: 25,
     },
     {
       id: "mission-2",
       title: "Second Mission",
       description: "Description 2",
-      xp: 75,
+      rarity: "legendary",
       progress: 75,
     },
   ];
 
   describe("Empty State", () => {
     it("should render empty state message when no missions", () => {
-      render(<MissionList missions={[]} />);
+      render(<MissionList missions={[]} playerLevel={1} />);
 
       expect(screen.getByText("No Pending Contracts")).toBeInTheDocument();
     });
 
     it("should render instruction text", () => {
-      render(<MissionList missions={[]} />);
+      render(<MissionList missions={[]} playerLevel={1} />);
 
       expect(
         screen.getByText(/Press the "Accept New Contract" button/i)
@@ -38,7 +38,7 @@ describe("MissionList Component", () => {
 
   describe("With Missions", () => {
     it("should render all missions", () => {
-      render(<MissionList missions={mockMissions} />);
+      render(<MissionList missions={mockMissions} playerLevel={1} />);
 
       expect(screen.getByText("First Mission")).toBeInTheDocument();
       expect(screen.getByText("Second Mission")).toBeInTheDocument();
@@ -46,7 +46,9 @@ describe("MissionList Component", () => {
 
     it("should pass onComplete callback to MissionCard", () => {
       const onComplete = jest.fn();
-      render(<MissionList missions={mockMissions} onComplete={onComplete} />);
+      render(
+        <MissionList missions={mockMissions} onComplete={onComplete} playerLevel={1} />,
+      );
 
       const sealButtons = screen.getAllByText("Seal Contract");
       fireEvent.click(sealButtons[0]);
@@ -56,7 +58,9 @@ describe("MissionList Component", () => {
 
     it("should pass onDelete callback to MissionCard", () => {
       const onDelete = jest.fn();
-      render(<MissionList missions={mockMissions} onDelete={onDelete} />);
+      render(
+        <MissionList missions={mockMissions} onDelete={onDelete} playerLevel={1} />,
+      );
 
       const buttons = screen.getAllByRole("button");
       const deleteButton = buttons.find(btn => !btn.textContent?.includes("Seal"));
@@ -74,6 +78,7 @@ describe("MissionList Component", () => {
           missions={mockMissions}
           onComplete={onComplete}
           completingId="mission-2"
+          playerLevel={1}
         />
       );
 
@@ -85,7 +90,7 @@ describe("MissionList Component", () => {
 
   describe("Single Mission", () => {
     it("should render single mission correctly", () => {
-      render(<MissionList missions={[mockMissions[0]]} />);
+      render(<MissionList missions={[mockMissions[0]]} playerLevel={1} />);
 
       expect(screen.getByText("First Mission")).toBeInTheDocument();
       expect(screen.queryByText("Second Mission")).not.toBeInTheDocument();
