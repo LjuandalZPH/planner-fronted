@@ -113,3 +113,77 @@ input[type="number"] {
 .animate-glow-gold {
   animation: glow-gold 2s ease-in-out infinite;
 }
+
+@keyframes void-particle-fly {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, 0px))) scale(0.1);
+    opacity: 0;
+  }
+}
+
+.void-particle {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  animation: void-particle-fly 0.88s ease-out forwards;
+}
+
+@keyframes void-purchase-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-3px) rotate(-0.4deg);
+  }
+  40% {
+    transform: translateX(3px) rotate(0.4deg);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+.void-purchase-shake {
+  animation: void-purchase-shake 0.45s ease-in-out;
+}
+
+@keyframes void-stamp-in {
+  0% {
+    transform: scale(1.6) rotate(-8deg);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.02) rotate(-2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 1;
+  }
+}
+
+.void-stamp {
+  animation: void-stamp-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Opacity-only: `transform` on an ancestor breaks `position: fixed` (e.g. modals) inside the view. */
+@keyframes dashboard-view-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dashboard-view-enter {
+  animation: dashboard-view-fade 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
