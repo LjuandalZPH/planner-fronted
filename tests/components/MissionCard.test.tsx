@@ -1,3 +1,4 @@
+import { getVoidCreditsForMissionSeal } from "@/lib/gamification";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MissionCard } from "@/components/mission/MissionCard";
 
@@ -6,7 +7,7 @@ describe("MissionCard Component", () => {
     id: "test-id-123",
     title: "Complete Project",
     description: "Finish the final project",
-    xp: 100,
+    rarity: "legendary" as const,
     progress: 50,
   };
 
@@ -23,16 +24,20 @@ describe("MissionCard Component", () => {
       expect(screen.getByText("Finish the final project")).toBeInTheDocument();
     });
 
-    it("should render XP badge", () => {
+    it("should render rarity badge and XP from rarity tier", () => {
       render(<MissionCard mission={mockMission} />);
 
-      expect(screen.getByText("100 XP")).toBeInTheDocument();
+      expect(screen.getByText("Legendary")).toBeInTheDocument();
+      expect(screen.getByText("150 XP")).toBeInTheDocument();
     });
 
-    it("should render progress percentage", () => {
-      render(<MissionCard mission={mockMission} />);
+    it("should render void credits pill when voidCreditsReward is provided", () => {
+      const n = getVoidCreditsForMissionSeal("legendary", 13);
+      render(
+        <MissionCard mission={mockMission} voidCreditsReward={n} />,
+      );
 
-      expect(screen.getByText("50%")).toBeInTheDocument();
+      expect(screen.getByText(`+${n} Void`)).toBeInTheDocument();
     });
 
     it("should not render description if empty", () => {
@@ -78,7 +83,7 @@ describe("MissionCard Component", () => {
       const onDelete = jest.fn();
       render(<MissionCard mission={mockMission} onDelete={onDelete} />);
 
-      expect(screen.getByRole("button")).toBeInTheDocument();
+      expect(screen.getAllByRole("button").length).toBeGreaterThanOrEqual(1);
     });
 
     it("should call onComplete with mission id when Seal Contract clicked", () => {

@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { HeroProfile } from "@/components/gamification/HeroProfile";
+import { formatVoidCredits } from "@/lib/utils";
 
 describe("HeroProfile Component", () => {
   const defaultProps = {
@@ -73,7 +74,60 @@ describe("HeroProfile Component", () => {
     });
   });
 
+  describe("Rank titles", () => {
+    it("should show forsaken tier at level 1", () => {
+      render(<HeroProfile {...defaultProps} level={1} />);
+
+      expect(screen.getByText("The Forsaken")).toBeInTheDocument();
+      expect(screen.getByText("El Abandonado")).toBeInTheDocument();
+    });
+
+    it("should show sellsword tier at level 6", () => {
+      render(<HeroProfile {...defaultProps} level={6} nextLevelXP={600} />);
+
+      expect(screen.getByText("Sellsword")).toBeInTheDocument();
+      expect(screen.getByText("Mercenario")).toBeInTheDocument();
+    });
+
+    it("should show rank ascended banner when rankUpActive", () => {
+      render(<HeroProfile {...defaultProps} rankUpActive />);
+
+      expect(
+        screen.getByText(/Rank ascended — your title has evolved/i),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("Streak widget", () => {
+    it("should show streak label and count", () => {
+      render(<HeroProfile {...defaultProps} currentStreak={4} />);
+
+      expect(screen.getByText("Racha")).toBeInTheDocument();
+      const streakStatus = screen.getByRole("status", { name: /Racha: 4 días/i });
+      expect(within(streakStatus).getByText("4")).toBeInTheDocument();
+    });
+
+    it("should expose at-risk streak in aria-label", () => {
+      render(
+        <HeroProfile {...defaultProps} currentStreak={3} streakAtRisk />,
+      );
+
+      expect(
+        screen.getByRole("status", {
+          name: /Racha en riesgo: 3 días/i,
+        }),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe("Different Levels", () => {
+    it("shows Void Credits when voidCreditsDisplay is set", () => {
+      render(<HeroProfile {...defaultProps} voidCreditsDisplay={1240} />);
+
+      expect(screen.getByText("Void Credits")).toBeInTheDocument();
+      expect(screen.getByText(formatVoidCredits(1240))).toBeInTheDocument();
+    });
+
     it("should render high levels correctly", () => {
       render(<HeroProfile {...defaultProps} level={10} nextLevelXP={1000} />);
 
@@ -86,7 +140,9 @@ describe("HeroProfile Component", () => {
     it("should render zero XP correctly", () => {
       render(<HeroProfile {...defaultProps} xp={0} />);
 
-      expect(screen.getByText("0")).toBeInTheDocument();
+      const xpHeaderRow = screen.getByText("100 XP").closest("div");
+      expect(xpHeaderRow).toBeTruthy();
+      expect(within(xpHeaderRow!).getByText("0")).toBeInTheDocument();
     });
   });
 });

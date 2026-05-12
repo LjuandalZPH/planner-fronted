@@ -18,7 +18,7 @@ describe("useMissions Hook", () => {
         result.current.addMission({
           title: "Test Mission",
           description: "Test Description",
-          xp: 50,
+          rarity: "rare",
         });
       });
 
@@ -26,7 +26,7 @@ describe("useMissions Hook", () => {
       expect(result.current.missions[0]).toMatchObject({
         title: "Test Mission",
         description: "Test Description",
-        xp: 50,
+        rarity: "rare",
         progress: 0,
       });
       expect(result.current.missions[0].id).toBeDefined();
@@ -36,10 +36,10 @@ describe("useMissions Hook", () => {
       const { result } = renderHook(() => useMissions());
 
       act(() => {
-        result.current.addMission({ title: "Mission 1", description: "", xp: 10 });
+        result.current.addMission({ title: "Mission 1", description: "", rarity: "common" });
       });
       act(() => {
-        result.current.addMission({ title: "Mission 2", description: "", xp: 20 });
+        result.current.addMission({ title: "Mission 2", description: "", rarity: "rare" });
       });
 
       expect(result.current.missions[0].title).toBe("Mission 2");
@@ -50,10 +50,10 @@ describe("useMissions Hook", () => {
       const { result } = renderHook(() => useMissions());
 
       act(() => {
-        result.current.addMission({ title: "Mission 1", description: "", xp: 10 });
+        result.current.addMission({ title: "Mission 1", description: "", rarity: "common" });
       });
       act(() => {
-        result.current.addMission({ title: "Mission 2", description: "", xp: 20 });
+        result.current.addMission({ title: "Mission 2", description: "", rarity: "rare" });
       });
 
       const ids = result.current.missions.map((m) => m.id);
@@ -70,7 +70,7 @@ describe("useMissions Hook", () => {
         result.current.addMission({
           title: "Test",
           description: "",
-          xp: 10,
+          rarity: "common",
         });
       });
 
@@ -87,10 +87,10 @@ describe("useMissions Hook", () => {
       const { result } = renderHook(() => useMissions());
 
       act(() => {
-        result.current.addMission({ title: "Mission 1", description: "", xp: 10 });
+        result.current.addMission({ title: "Mission 1", description: "", rarity: "common" });
       });
       act(() => {
-        result.current.addMission({ title: "Mission 2", description: "", xp: 20 });
+        result.current.addMission({ title: "Mission 2", description: "", rarity: "rare" });
       });
 
       const mission1Id = result.current.missions[1].id;
@@ -113,7 +113,7 @@ describe("useMissions Hook", () => {
       const { result } = renderHook(() => useMissions());
 
       act(() => {
-        result.current.addMission({ title: "Test", description: "", xp: 10 });
+        result.current.addMission({ title: "Test", description: "", rarity: "common" });
       });
 
       const missionId = result.current.missions[0].id;
@@ -129,10 +129,10 @@ describe("useMissions Hook", () => {
       const { result } = renderHook(() => useMissions());
 
       act(() => {
-        result.current.addMission({ title: "Mission 1", description: "", xp: 10 });
+        result.current.addMission({ title: "Mission 1", description: "", rarity: "common" });
       });
       act(() => {
-        result.current.addMission({ title: "Mission 2", description: "", xp: 20 });
+        result.current.addMission({ title: "Mission 2", description: "", rarity: "rare" });
       });
 
       const mission1Id = result.current.missions[1].id;
@@ -152,7 +152,7 @@ describe("useMissions Hook", () => {
       const { result } = renderHook(() => useMissions());
 
       act(() => {
-        result.current.addMission({ title: "Test", description: "", xp: 10 });
+        result.current.addMission({ title: "Test", description: "", rarity: "common" });
       });
 
       const missionId = result.current.missions[0].id;
@@ -168,10 +168,10 @@ describe("useMissions Hook", () => {
       const { result } = renderHook(() => useMissions());
 
       act(() => {
-        result.current.addMission({ title: "Mission 1", description: "", xp: 10 });
+        result.current.addMission({ title: "Mission 1", description: "", rarity: "common" });
       });
       act(() => {
-        result.current.addMission({ title: "Mission 2", description: "", xp: 20 });
+        result.current.addMission({ title: "Mission 2", description: "", rarity: "rare" });
       });
 
       const mission1Id = result.current.missions[1].id;

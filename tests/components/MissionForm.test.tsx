@@ -15,11 +15,11 @@ describe("MissionForm Component", () => {
       expect(screen.getByLabelText("Description")).toBeInTheDocument();
     });
 
-    it("should render XP input with default value", () => {
+    it("should render contract rarity options", () => {
       render(<MissionForm />);
 
-      const xpInput = screen.getByLabelText("Bounty XP") as HTMLInputElement;
-      expect(xpInput.value).toBe("10");
+      expect(screen.getByText("Contract rarity")).toBeInTheDocument();
+      expect(screen.getByRole("radio", { name: /common/i })).toBeChecked();
     });
   });
 
@@ -34,16 +34,14 @@ describe("MissionForm Component", () => {
       fireEvent.change(screen.getByLabelText("Description"), {
         target: { value: "Mission Description" },
       });
-      fireEvent.change(screen.getByLabelText("Bounty XP"), {
-        target: { value: "50" },
-      });
+      fireEvent.click(screen.getByRole("radio", { name: /epic/i }));
 
       fireEvent.click(screen.getByText("Accept Contract"));
 
       expect(onSubmit).toHaveBeenCalledWith({
         title: "New Mission",
         description: "Mission Description",
-        xp: 50,
+        rarity: "epic",
       });
     });
 
@@ -90,8 +88,8 @@ describe("MissionForm Component", () => {
     });
   });
 
-  describe("XP Validation", () => {
-    it("should submit with default XP value", () => {
+  describe("Rarity defaults", () => {
+    it("should submit with common rarity by default", () => {
       const onSubmit = jest.fn();
       render(<MissionForm onSubmit={onSubmit} />);
 
@@ -102,7 +100,7 @@ describe("MissionForm Component", () => {
       fireEvent.click(screen.getByText("Accept Contract"));
 
       expect(onSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({ xp: 10 })
+        expect.objectContaining({ rarity: "common" })
       );
     });
   });
