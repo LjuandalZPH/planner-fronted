@@ -3,12 +3,15 @@
 import { Scroll } from "lucide-react";
 import { MissionCard } from "./MissionCard";
 import type { Mission } from "./MissionCard";
+import { getVoidCreditsForMissionSeal } from "@/lib/gamification";
 
 interface MissionListProps {
   missions: Mission[];
   onComplete?: (id: string) => void;
   onDelete?: (id: string) => void;
   completingId?: string | null;
+  /** Current hero level — used to preview Void Credits on each contract. */
+  playerLevel: number;
 }
 
 export function MissionList({
@@ -16,6 +19,7 @@ export function MissionList({
   onComplete,
   onDelete,
   completingId,
+  playerLevel,
 }: MissionListProps) {
   if (!missions.length) {
     return (
@@ -50,6 +54,10 @@ export function MissionList({
           onComplete={onComplete}
           onDelete={onDelete}
           isCompleting={completingId === mission.id}
+          voidCreditsReward={getVoidCreditsForMissionSeal(
+            mission.rarity,
+            playerLevel,
+          )}
         />
       ))}
     </div>
